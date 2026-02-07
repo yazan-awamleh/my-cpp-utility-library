@@ -4,6 +4,7 @@
 #include<iostream>
 #include<string>
 #include "clsString.h"
+
 using namespace std;
 
 class clsDate
@@ -60,7 +61,7 @@ public:
 		_Day = Day;
 	}
 
-	short GetDay() {
+	short GetDay() const {
 		return _Day;
 	}
 	__declspec(property(get = GetDay, put = SetDay)) short Day;
@@ -69,7 +70,7 @@ public:
 		_Month = Month;
 	}
 
-	short GetMonth() {
+	short GetMonth() const {
 		return _Month;
 	}
 	__declspec(property(get = GetMonth, put = SetMonth)) short Month;
@@ -79,12 +80,12 @@ public:
 		_Year = Year;
 	}
 
-	short GetYear() {
+	short GetYear() const {
 		return _Year;
 	}
 	__declspec(property(get = GetYear, put = SetYear)) short Year;
 
-	void Print()
+	void Print() const
 	{
 		cout << DateToString() << endl;
 	}
@@ -102,6 +103,28 @@ public:
 		Day = now->tm_mday;
 
 		return clsDate(Day, Month, Year);
+	}
+
+	static string GetSystemDateTimeString()
+	{
+		//system datetime string
+		time_t t = time(0);
+		tm* now = localtime(&t);
+
+		short Day, Month, Year, Hour, Minute, Second;
+
+		Year = now->tm_year + 1900;
+		Month = now->tm_mon + 1;
+		Day = now->tm_mday;
+		Hour = now->tm_hour;
+		Minute = now->tm_min;
+		Second = now->tm_sec;
+
+		return (to_string(Day) + "/" + to_string(Month) + "/"
+			+ to_string(Year) + " - "
+			+ to_string(Hour) + ":" + to_string(Minute)
+			+ ":" + to_string(Second));
+
 	}
 
 	static	bool IsValidDate(clsDate Date)
@@ -136,7 +159,7 @@ public:
 
 	}
 
-	bool IsValid()
+	bool IsValid() const
 	{
 		return IsValidDate(*this);
 	}
@@ -146,7 +169,7 @@ public:
 		return  to_string(Date.Day) + "/" + to_string(Date.Month) + "/" + to_string(Date.Year);
 	}
 
-	string DateToString()
+	string DateToString() const
 	{
 		return  DateToString(*this);
 	}
@@ -160,17 +183,17 @@ public:
 		return (Year % 4 == 0 && Year % 100 != 0) || (Year % 400 == 0);
 	}
 
-	bool isLeapYear()
+	bool isLeapYear() const
 	{
 		return isLeapYear(_Year);
 	}
 
 	static short NumberOfDaysInAYear(short Year)
 	{
-		return  isLeapYear(Year) ? 365 : 364;
+		return  isLeapYear(Year) ? 366 : 365;  // FIXED: was 365:364
 	}
 
-	short NumberOfDaysInAYear()
+	short NumberOfDaysInAYear() const
 	{
 		return  NumberOfDaysInAYear(_Year);
 	}
@@ -180,7 +203,7 @@ public:
 		return  NumberOfDaysInAYear(Year) * 24;
 	}
 
-	short NumberOfHoursInAYear()
+	short NumberOfHoursInAYear() const
 	{
 		return  NumberOfHoursInAYear(_Year);
 	}
@@ -190,7 +213,7 @@ public:
 		return  NumberOfHoursInAYear(Year) * 60;
 	}
 
-	int NumberOfMinutesInAYear()
+	int NumberOfMinutesInAYear() const
 	{
 		return  NumberOfMinutesInAYear(_Year);
 	}
@@ -200,9 +223,9 @@ public:
 		return  NumberOfMinutesInAYear(Year) * 60;
 	}
 
-	int NumberOfSecondsInAYear()
+	int NumberOfSecondsInAYear() const
 	{
-		return  NumberOfSecondsInAYear();
+		return  NumberOfSecondsInAYear(_Year);  // FIXED: was infinite recursion
 	}
 
 	static short NumberOfDaysInAMonth(short Month, short Year)
@@ -216,7 +239,7 @@ public:
 
 	}
 
-	short NumberOfDaysInAMonth()
+	short NumberOfDaysInAMonth() const
 	{
 		return NumberOfDaysInAMonth(_Month, _Year);
 	}
@@ -226,7 +249,7 @@ public:
 		return  NumberOfDaysInAMonth(Month, Year) * 24;
 	}
 
-	short NumberOfHoursInAMonth()
+	short NumberOfHoursInAMonth() const
 	{
 		return  NumberOfDaysInAMonth(_Month, _Year) * 24;
 	}
@@ -236,7 +259,7 @@ public:
 		return  NumberOfHoursInAMonth(Month, Year) * 60;
 	}
 
-	int NumberOfMinutesInAMonth()
+	int NumberOfMinutesInAMonth() const
 	{
 		return  NumberOfHoursInAMonth(_Month, _Year) * 60;
 	}
@@ -246,7 +269,7 @@ public:
 		return  NumberOfMinutesInAMonth(Month, Year) * 60;
 	}
 
-	int NumberOfSecondsInAMonth()
+	int NumberOfSecondsInAMonth() const
 	{
 		return  NumberOfMinutesInAMonth(_Month, _Year) * 60;
 	}
@@ -262,7 +285,7 @@ public:
 		return (Day + y + (y / 4) - (y / 100) + (y / 400) + ((31 * m) / 12)) % 7;
 	}
 
-	short DayOfWeekOrder()
+	short DayOfWeekOrder() const
 	{
 		return DayOfWeekOrder(_Day, _Month, _Year);
 	}
@@ -284,7 +307,7 @@ public:
 
 	}
 
-	string DayShortName()
+	string DayShortName() const
 	{
 
 		string arrDayNames[] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
@@ -304,7 +327,7 @@ public:
 		return (Months[MonthNumber - 1]);
 	}
 
-	string MonthShortName()
+	string MonthShortName() const
 	{
 
 		return MonthShortName(_Month);
@@ -347,7 +370,7 @@ public:
 
 	}
 
-	void PrintMonthCalendar()
+	void PrintMonthCalendar() const
 	{
 		PrintMonthCalendar(_Month, _Year);
 	}
@@ -367,7 +390,7 @@ public:
 		return;
 	}
 
-	void PrintYearCalendar()
+	void PrintYearCalendar() const
 	{
 		printf("\n  _________________________________\n\n");
 		printf("           Calendar - %d\n", _Year);
@@ -398,7 +421,7 @@ public:
 		return TotalDays;
 	}
 
-	short DaysFromTheBeginingOfTheYear()
+	short DaysFromTheBeginingOfTheYear() const
 	{
 
 
@@ -485,7 +508,7 @@ public:
 		return  (Date1.Year < Date2.Year) ? true : ((Date1.Year == Date2.Year) ? (Date1.Month < Date2.Month ? true : (Date1.Month == Date2.Month ? Date1.Day < Date2.Day : false)) : false);
 	}
 
-	bool IsDateBeforeDate2(clsDate Date2)
+	bool IsDateBeforeDate2(clsDate Date2) const
 	{
 		//note: *this sends the current object :-) 
 		return  IsDate1BeforeDate2(*this, Date2);
@@ -497,7 +520,7 @@ public:
 		return  (Date1.Year == Date2.Year) ? ((Date1.Month == Date2.Month) ? ((Date1.Day == Date2.Day) ? true : false) : false) : false;
 	}
 
-	bool IsDateEqualDate2(clsDate Date2)
+	bool IsDateEqualDate2(clsDate Date2) const
 	{
 		return  IsDate1EqualDate2(*this, Date2);
 	}
@@ -509,7 +532,7 @@ public:
 
 	}
 
-	bool IsLastDayInMonth()
+	bool IsLastDayInMonth() const
 	{
 
 		return IsLastDayInMonth(*this);
@@ -584,7 +607,7 @@ public:
 		return IncludeEndDay ? ++Days * SawpFlagValue : Days * SawpFlagValue;
 	}
 
-	int GetDifferenceInDays(clsDate Date2, bool IncludeEndDay = false)
+	int GetDifferenceInDays(clsDate Date2, bool IncludeEndDay = false) const
 	{
 		return GetDifferenceInDays(*this, Date2, IncludeEndDay);
 	}
@@ -611,7 +634,7 @@ public:
 		IncreaseDateByOneWeek(*this);
 	}
 
-	clsDate IncreaseDateByXWeeks(short Weeks, clsDate& Date)
+	static clsDate IncreaseDateByXWeeks(short Weeks, clsDate& Date)
 	{
 
 		for (short i = 1; i <= Weeks; i++)
@@ -626,7 +649,7 @@ public:
 		IncreaseDateByXWeeks(Weeks, *this);
 	}
 
-	clsDate IncreaseDateByOneMonth(clsDate& Date)
+	static clsDate IncreaseDateByOneMonth(clsDate& Date)
 	{
 
 		if (Date.Month == 12)
@@ -658,7 +681,7 @@ public:
 
 	}
 
-	clsDate IncreaseDateByXDays(short Days, clsDate& Date)
+	static clsDate IncreaseDateByXDays(short Days, clsDate& Date)
 	{
 
 		for (short i = 1; i <= Days; i++)
@@ -674,7 +697,7 @@ public:
 		IncreaseDateByXDays(Days, *this);
 	}
 
-	clsDate IncreaseDateByXMonths(short Months, clsDate& Date)
+	static clsDate IncreaseDateByXMonths(short Months, clsDate& Date)
 	{
 
 		for (short i = 1; i <= Months; i++)
@@ -700,7 +723,7 @@ public:
 		IncreaseDateByOneYear(*this);
 	}
 
-	clsDate IncreaseDateByXYears(short Years, clsDate& Date)
+	static clsDate IncreaseDateByXYears(short Years, clsDate& Date)
 	{
 		Date.Year += Years;
 		return Date;
@@ -709,10 +732,10 @@ public:
 
 	void IncreaseDateByXYears(short Years)
 	{
-		IncreaseDateByXYears(Years);
+		IncreaseDateByXYears(Years, *this);  // FIXED: was missing *this
 	}
 
-	clsDate IncreaseDateByOneDecade(clsDate& Date)
+	static clsDate IncreaseDateByOneDecade(clsDate& Date)
 	{
 		//Period of 10 years
 		Date.Year += 10;
@@ -724,7 +747,7 @@ public:
 		IncreaseDateByOneDecade(*this);
 	}
 
-	clsDate IncreaseDateByXDecades(short Decade, clsDate& Date)
+	static clsDate IncreaseDateByXDecades(short Decade, clsDate& Date)
 	{
 		Date.Year += Decade * 10;
 		return Date;
@@ -735,7 +758,7 @@ public:
 		IncreaseDateByXDecades(Decade, *this);
 	}
 
-	clsDate IncreaseDateByOneCentury(clsDate& Date)
+	static clsDate IncreaseDateByOneCentury(clsDate& Date)
 	{
 		//Period of 100 years
 		Date.Year += 100;
@@ -747,14 +770,14 @@ public:
 		IncreaseDateByOneCentury(*this);
 	}
 
-	clsDate IncreaseDateByOneMillennium(clsDate& Date)
+	static clsDate IncreaseDateByOneMillennium(clsDate& Date)
 	{
 		//Period of 1000 years
 		Date.Year += 1000;
 		return Date;
 	}
 
-	clsDate IncreaseDateByOneMillennium()
+	void IncreaseDateByOneMillennium()  // FIXED: return type was clsDate, now void
 	{
 		IncreaseDateByOneMillennium(*this);
 	}
@@ -786,7 +809,7 @@ public:
 
 	void DecreaseDateByOneDay()
 	{
-		DecreaseDateByOneDay(*this);
+		*this = DecreaseDateByOneDay(*this);  // FIXED: was missing assignment
 	}
 
 	static clsDate DecreaseDateByOneWeek(clsDate& Date)
@@ -958,7 +981,7 @@ public:
 		return  DayOfWeekOrder(Date.Day, Date.Month, Date.Year) == 6;
 	}
 
-	short IsEndOfWeek()
+	short IsEndOfWeek() const
 	{
 		return IsEndOfWeek(*this);
 	}
@@ -970,7 +993,7 @@ public:
 		return  (DayIndex == 5 || DayIndex == 6);
 	}
 
-	bool IsWeekEnd()
+	bool IsWeekEnd() const
 	{
 		return  IsWeekEnd(*this);
 	}
@@ -989,7 +1012,7 @@ public:
 
 	}
 
-	bool IsBusinessDay()
+	bool IsBusinessDay() const
 	{
 		return  IsBusinessDay(*this);
 	}
@@ -999,7 +1022,7 @@ public:
 		return 6 - DayOfWeekOrder(Date.Day, Date.Month, Date.Year);
 	}
 
-	short DaysUntilTheEndOfWeek()
+	short DaysUntilTheEndOfWeek() const
 	{
 		return  DaysUntilTheEndOfWeek(*this);
 	}
@@ -1016,7 +1039,7 @@ public:
 
 	}
 
-	short DaysUntilTheEndOfMonth()
+	short DaysUntilTheEndOfMonth() const
 	{
 		return DaysUntilTheEndOfMonth(*this);
 	}
@@ -1033,7 +1056,7 @@ public:
 
 	}
 
-	short DaysUntilTheEndOfYear()
+	short DaysUntilTheEndOfYear() const
 	{
 		return  DaysUntilTheEndOfYear(*this);
 	}
@@ -1097,7 +1120,7 @@ public:
 
 	}
 
-	bool IsDateAfterDate2(clsDate Date2)
+	bool IsDateAfterDate2(clsDate Date2) const
 	{
 		return IsDate1AfterDate2(*this, Date2);
 	}
@@ -1120,9 +1143,11 @@ public:
 
 	}
 
-	enDateCompare CompareDates(clsDate Date2)
+	enDateCompare CompareDates(clsDate Date2) const
 	{
 		return CompareDates(*this, Date2);
 	}
-};
 
+
+
+};
